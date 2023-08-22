@@ -1,0 +1,60 @@
+---
+apiVersion: apps.foundationdb.org/v1beta2
+kind: FoundationDBBackup
+metadata:
+  name: test-cluster
+spec:
+  blobStoreConfiguration:
+    accountName: s3-proxy.fdb-s3-proxy:8080
+    bucketName: fdb-backups
+    urlParameters:
+    - "secure_connection=0"
+  clusterName: test-cluster
+  podTemplateSpec:
+    spec:
+      containers:
+      - env:
+        - name: FDB_BLOB_CREDENTIALS
+          value: /var/backup-credentials/credentials
+        # - name: FDB_TLS_CERTIFICATE_FILE
+        #   value: /tmp/fdb-certs/tls.crt
+        # - name: FDB_TLS_CA_FILE
+        #   value: /tmp/fdb-certs/tls.crt
+        # - name: FDB_TLS_KEY_FILE
+        #   value: /tmp/fdb-certs/tls.key
+        name: foundationdb
+        resources:
+          limits:
+            cpu: 250m
+            memory: 128Mi
+          requests:
+            cpu: 250m
+            memory: 128Mi
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 0
+        volumeMounts:
+        # - mountPath: /tmp/fdb-certs
+        #   name: fdb-certs
+        - mountPath: /var/backup-credentials
+          name: backup-credentials
+      initContainers:
+      - name: foundationdb-kubernetes-init
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          runAsUser: 0
+      volumes:
+      - name: backup-credentials
+        secret:
+          secretName: s3-proxy-credentials
+      # - name: fdb-certs
+      #   secret:
+      #     secretName: fdb-kubernetes-operator-secrets
+  snapshotPeriodSeconds: 3600
+  version: 7.1.26

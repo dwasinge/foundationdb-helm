@@ -1,0 +1,66 @@
+# Default values for s3-proxy.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: andrewgaul/s3proxy
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+s3proxy:
+  s3:
+    # authorization: aws-v2-or-v4
+    authorization: none
+    endpoint: http://0.0.0.0:8080
+    identity: TO_REPLACE
+    base64identity: UkVQTEFDRV9NRQo=
+    credential: TO_REPLACE
+    base64credential: UkVQTEFDRV9NRQo=
+  jclouds:
+    provider: azureblob
+    endpoint: https://TO_REPLACE_WITH_AZURE_ID.blob.core.windows.net/
+    identity: TO_REPLACE_WITH_AZURE_ID
+    base64identity: TO_REPLACE_WITH_BASE64_AZURE_ID
+    credential: TO_REPLACE_WITH_AZURE_ACCESS_KEY
+    base64credential: TO_REPLACE_WITH_BASE64_AZURE_ACCESS_KEY

@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "s3-proxy.fullname" . }}
+  labels:
+    {{- include "s3-proxy.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "s3-proxy.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "s3-proxy.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "s3-proxy.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: S3PROXY_AUTHORIZATION
+              value: {{ .Values.s3proxy.s3.authorization }}
+            - name: S3PROXY_ENDPOINT
+              value: {{ .Values.s3proxy.s3.endpoint }}
+            - name: JCLOUDS_ENDPOINT
+              value: {{ .Values.s3proxy.jclouds.endpoint }}
+            - name: S3PROXY_IDENTITY
+              value: {{ .Values.s3proxy.s3.identity }}
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: s3-proxy-secret
+            #       key: s3-proxy-identity
+            - name: S3PROXY_CREDENTIAL
+              value: {{ .Values.s3proxy.s3.credential }}
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: s3-proxy-secret
+            #       key: s3-proxy-credential
+            - name: JCLOUDS_PROVIDER
+              value: {{ .Values.s3proxy.jclouds.provider }}
+            - name: JCLOUDS_IDENTITY
+              value: {{ .Values.s3proxy.jclouds.identity }}
+              # valueFrom:
+              #   secretKeyRef:
+              #     name: s3-proxy-secret
+              #     key: jclouds-identity
+            - name: JCLOUDS_CREDENTIAL
+              value: {{ .Values.s3proxy.jclouds.credential }}
+              # valueFrom:
+              #   secretKeyRef:
+              #     name: s3-proxy-secret
+              #     key: jclouds-credential
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

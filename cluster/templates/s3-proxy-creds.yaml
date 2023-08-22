@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: s3-proxy-credentials
+type: Opaque
+stringData:
+    credentials: |
+        {
+            "accounts": {
+                "s3-proxy.fdb-s3-proxy:8080": {}
+            }
+        }
