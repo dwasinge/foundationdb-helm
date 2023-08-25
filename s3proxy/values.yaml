@@ -60,7 +60,6 @@ s3proxy:
   jclouds:
     provider: azureblob
     endpoint: https://dwfdb.blob.core.windows.net/
-    identity: dwfdb
-    base64identity: ZHdmZGIK
-    credential: xLoTmH68RUmovnL8doR7XIrASGWRckb9np8cbdpKdteK3LYfm8HXUgOQBIN8mwJpVrGuQqnwP8ym+AStBfLA5A==
-    base64credential: eExvVG1INjhSVW1vdm5MOGRvUjdYSXJBU0dXUmNrYjlucDhjYmRwS2R0ZUszTFlmbThIWFVnT1FCSU44bXdKcFZyR3VRcW53UDh5bStBU3RCZkxBNUE9PQo=
+    identity: ZHdmZGI=
+    credential: eExvVG1INjhSVW1vdm5MOGRvUjdYSXJBU0dXUmNrYjlucDhjYmRwS2R0ZUszTFlmbThIWFVnT1FCSU44bXdKcFZyR3VRcW53UDh5bStBU3RCZkxBNUE9PQ==
+                      

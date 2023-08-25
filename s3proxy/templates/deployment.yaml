@@ -55,17 +55,15 @@ spec:
             - name: JCLOUDS_PROVIDER
               value: {{ .Values.s3proxy.jclouds.provider }}
             - name: JCLOUDS_IDENTITY
-              value: {{ .Values.s3proxy.jclouds.identity }}
-              # valueFrom:
-              #   secretKeyRef:
-              #     name: s3-proxy-secret
-              #     key: jclouds-identity
+              valueFrom:
+                secretKeyRef:
+                  key: jclouds-identity
+                  name: s3-proxy-secret
             - name: JCLOUDS_CREDENTIAL
-              value: {{ .Values.s3proxy.jclouds.credential }}
-              # valueFrom:
-              #   secretKeyRef:
-              #     name: s3-proxy-secret
-              #     key: jclouds-credential
+              valueFrom:
+                secretKeyRef:
+                  key: jclouds-credential
+                  name: s3-proxy-secret
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
