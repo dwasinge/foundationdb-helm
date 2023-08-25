@@ -1,8 +1,8 @@
----
+{{- if .Values.resources.createCluster -}}
 apiVersion: apps.foundationdb.org/v1beta2
 kind: FoundationDBCluster
 metadata:
-  name: test-cluster
+  name: {{ .Values.fdb.clusterName }}
 spec:
   automationOptions:
     replacements:
@@ -12,7 +12,7 @@ spec:
   labels:
     filterOnOwnerReference: false
     matchLabels:
-      foundationdb.org/fdb-cluster-name: test-cluster
+      foundationdb.org/fdb-cluster-name: {{ .Values.fdb.clusterName }}
     processClassLabels:
     - foundationdb.org/fdb-process-class
     processGroupIDLabels:
@@ -25,6 +25,7 @@ spec:
     general:
       customParameters:
       - knob_disable_posix_kernel_aio=1
+      - knob_http_verbose_level=4
       podTemplate:
         spec:
           containers:
@@ -33,8 +34,6 @@ spec:
               requests:
                 cpu: 100m
                 memory: 128Mi
-            securityContext:
-              runAsUser: 0
           - name: foundationdb-kubernetes-sidecar
             resources:
               limits:
@@ -43,8 +42,6 @@ spec:
               requests:
                 cpu: 100m
                 memory: 128Mi
-            securityContext:
-              runAsUser: 0
           initContainers:
           - name: foundationdb-kubernetes-init
             resources:
@@ -54,8 +51,6 @@ spec:
               requests:
                 cpu: 100m
                 memory: 128Mi
-            securityContext:
-              runAsUser: 0
       volumeClaimTemplate:
         spec:
           resources:
@@ -68,3 +63,4 @@ spec:
     enableReadinessProbe: false
   useExplicitListenAddress: true
   version: 7.1.26
+{{- end }}

@@ -1,0 +1,14 @@
+{{- if .Values.resources.createRestore -}}
+apiVersion: apps.foundationdb.org/v1beta2
+kind: FoundationDBRestore
+metadata:
+  name: {{ .Values.fdb.clusterName }}
+spec:
+  blobStoreConfiguration:
+    accountName: '{{ .Values.s3proxy.service.name }}:{{ .Values.s3proxy.service.port }}'
+    backupName: {{ .Values.fdb.clusterName }}
+    bucketName: bucket={{ .Values.fdb.backup.bucket }}
+    urlParameters:
+    - "secure_connection=0"
+  destinationClusterName: {{ .Values.fdb.clusterName }}
+{{- end }}

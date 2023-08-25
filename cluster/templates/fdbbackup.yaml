@@ -1,15 +1,15 @@
----
+{{- if .Values.resources.createBackup -}}
 apiVersion: apps.foundationdb.org/v1beta2
 kind: FoundationDBBackup
 metadata:
-  name: test-cluster
+  name: {{ .Values.fdb.clusterName }}
 spec:
   blobStoreConfiguration:
-    accountName: s3-proxy.fdb-s3-proxy:8080
-    bucketName: fdb-backups
+    accountName: '{{ .Values.s3proxy.service.name }}:{{ .Values.s3proxy.service.port }}'
+    bucket: {{ .Values.fdb.backup.bucket }}
     urlParameters:
     - "secure_connection=0"
-  clusterName: test-cluster
+  clusterName: {{ .Values.fdb.clusterName }}
   podTemplateSpec:
     spec:
       containers:
@@ -30,9 +30,6 @@ spec:
           requests:
             cpu: 250m
             memory: 128Mi
-        securityContext:
-          runAsGroup: 0
-          runAsUser: 0
         volumeMounts:
         # - mountPath: /tmp/fdb-certs
         #   name: fdb-certs
@@ -47,14 +44,18 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
-        securityContext:
-          runAsUser: 0
+        # securityContext:
+        #   runAsUser: 0
       volumes:
       - name: backup-credentials
         secret:
-          secretName: s3-proxy-credentials
+          secretName: '{{ .Values.s3proxy.service.name }}-credentials'
       # - name: fdb-certs
       #   secret:
       #     secretName: fdb-kubernetes-operator-secrets
   snapshotPeriodSeconds: 3600
   version: 7.1.26
+  {{- if .Values.fdb.backup.stopped }}
+  backupState: Stopped
+  {{- end }}
+{{- end }}

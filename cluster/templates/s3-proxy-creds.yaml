@@ -1,13 +1,14 @@
----
+{{- if .Values.resources.createS3Credentials -}}
 apiVersion: v1
 kind: Secret
 metadata:
-    name: s3-proxy-credentials
+    name: {{ .Values.s3proxy.service.name }}-credentials
 type: Opaque
 stringData:
     credentials: |
         {
             "accounts": {
-                "s3-proxy.fdb-s3-proxy:8080": {}
+                "{{ .Values.s3proxy.service.name }}:{{ .Values.s3proxy.service.port }}": {}
             }
         }
+{{- end }}
