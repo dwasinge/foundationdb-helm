@@ -5,11 +5,18 @@ metadata:
   name: {{ .Values.fdb.clusterName }}
 spec:
   blobStoreConfiguration:
+{{- if .Values.s3proxy.service.auth.enabled }}
+    accountName: '{{ .Values.s3proxy.service.auth.id }}:{{ .Values.s3proxy.service.auth.credential }}@{{ .Values.s3proxy.service.name }}:{{ .Values.s3proxy.service.port }}'
+{{- else }}
     accountName: '{{ .Values.s3proxy.service.name }}:{{ .Values.s3proxy.service.port }}'
+{{- end }}
     bucket: {{ .Values.fdb.backup.bucket }}
     urlParameters:
     - "secure_connection=0"
   clusterName: {{ .Values.fdb.clusterName }}
+  customParameters:
+    - knob_http_verbose_level=4
+    - knob_http_request_aws_v4_header=false
   podTemplateSpec:
     spec:
       containers:
