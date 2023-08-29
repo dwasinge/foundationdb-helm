@@ -6,9 +6,12 @@ metadata:
 type: Opaque
 stringData:
     credentials: |
-        {
-            "accounts": {
+        { "accounts": {
+{{- if .Values.s3proxy.service.auth.enabled }}
+                "{{ .Values.s3proxy.service.auth.id }}@{{ .Values.s3proxy.service.name }}": { "secret" : "{{ .Values.s3proxy.service.auth.credential }}" }
+{{- else }}
                 "{{ .Values.s3proxy.service.name }}:{{ .Values.s3proxy.service.port }}": {}
+{{- end }}
             }
         }
 {{- end }}

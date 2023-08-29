@@ -41,17 +41,15 @@ spec:
             - name: JCLOUDS_ENDPOINT
               value: {{ .Values.s3proxy.jclouds.endpoint }}
             - name: S3PROXY_IDENTITY
-              value: {{ .Values.s3proxy.s3.identity }}
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: s3-proxy-secret
-            #       key: s3-proxy-identity
+              valueFrom:
+                secretKeyRef:
+                  name: s3-proxy-secret
+                  key: s3-proxy-identity
             - name: S3PROXY_CREDENTIAL
-              value: {{ .Values.s3proxy.s3.credential }}
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: s3-proxy-secret
-            #       key: s3-proxy-credential
+              valueFrom:
+                secretKeyRef:
+                  name: s3-proxy-secret
+                  key: s3-proxy-credential
             - name: JCLOUDS_PROVIDER
               value: {{ .Values.s3proxy.jclouds.provider }}
             - name: JCLOUDS_IDENTITY

@@ -101,6 +101,31 @@ oc project default
 # run helm chart
 helm install fdb-cluster cluster
 ```
+
+# S3 Proxy Authentication Issues:
+
+S3 Proxy allows you to specify the `identity` and associated `key/credential` for clients (i.e. the FoundationDB Kubernetes Operator) to use to accesss the S3 API.
+
+NOTE:  This only matters if you enable S3 Proxy Authentication for the S3 API.   The BLOB storage provider still requires the access ID/Key.
+
+## AWS Request Header Version
+
+S3 Proxy allows the clients to use AWS Request Header version 2 or 4.  This is configured using the `S3PROXY_AUTHORIZATION` environment variable.  The default value `aws-v2-or-v4` accepts both v2 and v4 requests.  V4 should be the standard now, but FoundationDB version v7.1.26 seems to be providing incorrect headers when using v4.  Or at least not what S3 Proxy is expecting from a v4 request.
+
+Using the AWS S3 CLI, it seems to work with S3 Proxy, while the DBBackup command in FoundationDB will always result in a 403 being returned from S3 Proxy. 
+
+For now, setting the knob `--knob_http_request_aws_v4_header=false` will force a v2 request to be sent and allow for a successful start of the backup.
+
+There may be more configuration options on S3 Proxy, but it does work with the AWS S3 CLI so not sure this is just an issue with the requests FoundationDB is producing.
+
+## Operator Doesn't Make FDBBackup call on Backup Agent Pods
+
+The cluster file in the /tmp directory of the `fdb-kubernetes-operator-controller-manager` pod contains only IPs for the storage nodes in my testing.  It then tries to issues the backup command on a pod that doesn't contain the mounted credentials file (`/var/backup-credentials/credentials`) and therefore the required environment variable (`FDB_BLOB_CREDENTIALS`) is not set.
+
+This ends in a timeout and an error.
+
+In order for the backup to start in this scenario, the identity/credential must be provided in the blobstore URL.
+
 # Backup and Restore Test Process
 
 ## Initialize Project, Cluster, and Backup

@@ -32,6 +32,7 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 8080
+  targetPort: 8080
 
 resources: {}
 
@@ -50,16 +51,13 @@ affinity: {}
 
 s3proxy:
   s3:
-    # authorization: aws-v2-or-v4
-    authorization: none
+    authorization: aws-v2-or-v4
     endpoint: http://0.0.0.0:8080
-    identity: TO_REPLACE
-    base64identity: UkVQTEFDRV9NRQo=
-    credential: TO_REPLACE
-    base64credential: UkVQTEFDRV9NRQo=
+    identity: REPLACE_ME
+    credential: REPLACE_ME
   jclouds:
     provider: azureblob
-    endpoint: https://dwfdb.blob.core.windows.net/
-    identity: ZHdmZGI=
-    credential: eExvVG1INjhSVW1vdm5MOGRvUjdYSXJBU0dXUmNrYjlucDhjYmRwS2R0ZUszTFlmbThIWFVnT1FCSU44bXdKcFZyR3VRcW53UDh5bStBU3RCZkxBNUE9PQ==
+    endpoint: https://REPLACE_ME.blob.core.windows.net/
+    identity: REPLACE_ME
+    credential: REPLACE_ME
                       
